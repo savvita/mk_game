@@ -17,9 +17,9 @@ public class RadioTowerCard extends CityCard {
         // TODO override this
         player.getPossibilities().setCanThrowAgain(!player.getPossibilities().isCanThrowAgain());
         if(player.getPossibilities().isCanThrowAgain()) {
-            return new CardResult(type, CardResultTypes.CAN_RETHROW);
+            return new CardResult(this, CardResultTypes.CAN_RETHROW);
         }
 
-        return new CardResult(type, CardResultTypes.NONE);
+        return new CardResult(this, CardResultTypes.NONE);
     }
 }

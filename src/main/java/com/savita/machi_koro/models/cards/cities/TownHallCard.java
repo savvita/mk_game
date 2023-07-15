@@ -17,9 +17,9 @@ public class TownHallCard extends CityCard {
     protected CardResult applyCard(Game game, Player player) {
         if(player.getAccount().getAmount() == 0) {
             player.getAccount().setAmount(value);
-            return new CardResult(type, CardResultTypes.MONEY, value, null, player);
+            return new CardResult(this, CardResultTypes.MONEY, value, null, player);
         }
 
-        return new CardResult(type, CardResultTypes.NONE);
+        return new CardResult(this, CardResultTypes.NONE);
     }
 }

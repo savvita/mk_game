@@ -26,6 +26,6 @@ public class AirportCard extends CityCard {
     @Override
     protected CardResult applyCard(Game game, Player player) {
         player.getPossibilities().setHasExtraMoney(true);
-        return new CardResult(type, CardResultTypes.NONE);
+        return new CardResult(this, CardResultTypes.NONE);
     }
 }

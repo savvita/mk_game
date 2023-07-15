@@ -16,10 +16,10 @@ public class AmusementParkCard extends CityCard {
     protected CardResult applyCard(Game game, Player player) {
         if(game.getDices().isDouble()) {
             player.getPossibilities().setHasExtraMove(true);
-            return new CardResult(type, CardResultTypes.CAN_THROW_AGAIN);
+            return new CardResult(this, CardResultTypes.CAN_THROW_AGAIN);
         } else {
             player.getPossibilities().setHasExtraMove(false);
-            return new CardResult(type, CardResultTypes.NONE);
+            return new CardResult(this, CardResultTypes.NONE);
         }
     }
 }

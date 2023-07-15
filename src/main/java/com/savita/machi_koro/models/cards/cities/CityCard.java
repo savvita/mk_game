@@ -9,16 +9,12 @@ import com.savita.machi_koro.models.game.Player;
 
 public abstract class CityCard extends Card {
     protected boolean isBuilt = false;
-    protected Cards type;
     protected int value;
     public CityCard(String title, String description, String image, int price) {
         super(title, description, image, price);
     }
     public int getValue() {
         return value;
-    }
-    public Cards getType() {
-        return type;
     }
     public boolean isBuilt() {
         return isBuilt;
@@ -30,11 +26,11 @@ public abstract class CityCard extends Card {
         if(game.isActive(player) && isBuilt) {
             return applyCard(game, player);
         }
-        return new CardResult(type, CardResultTypes.NONE);
+        return new CardResult(this, CardResultTypes.NONE);
     }
 
     protected CardResult applyCard(Game game, Player player) {
-        return new CardResult(type, CardResultTypes.NONE);
+        return new CardResult(this, CardResultTypes.NONE);
     }
     public void destroy(Player player) {
         isBuilt = false;

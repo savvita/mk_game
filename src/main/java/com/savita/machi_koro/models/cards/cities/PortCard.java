@@ -18,10 +18,10 @@ public class PortCard extends CityCard {
         var dice = game.getDiceSum();
         if (dice >= 10 ) {
             player.getPossibilities().setCanAddToDice(true);
-            return new CardResult(type, CardResultTypes.CAN_ADD_TO_DICE);
+            return new CardResult(this, CardResultTypes.CAN_ADD_TO_DICE);
         } else {
             player.getPossibilities().setCanAddToDice(false);
-            return new CardResult(type, CardResultTypes.NONE);
+            return new CardResult(this, CardResultTypes.NONE);
         }
     }
 }
