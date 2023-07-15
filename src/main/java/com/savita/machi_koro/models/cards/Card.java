@@ -5,6 +5,7 @@ public abstract class Card {
     private final String description;
     private final String image;
     private final int price;
+    protected Cards type;
     public Card(String title, String description, String image, int price) {
         this.title = title;
         this.description = description;
@@ -23,5 +24,7 @@ public abstract class Card {
     public int getPrice() {
         return price;
     }
-
+    public Cards getType() {
+        return type;
+    }
 }

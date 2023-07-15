@@ -21,10 +21,11 @@ public class TelevisionCenterCard extends VioletCompanyCard {
     public CardResult apply(Game game, Player player) {
         if(isApplied(game, player)) {
             player.getPossibilities().setCanSteal(true);
-            return new CardResult(type, CardResultTypes.CAN_STEAL);
+            player.getPossibilities().setStealAmount(value);
+            return new CardResult(this, CardResultTypes.CAN_STEAL);
         }
 
         player.getPossibilities().setCanSteal(false);
-        return new CardResult(type, CardResultTypes.NONE);
+        return new CardResult(this, CardResultTypes.NONE);
     }
 }

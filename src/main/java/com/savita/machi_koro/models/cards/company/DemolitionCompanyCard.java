@@ -26,15 +26,15 @@ public class DemolitionCompanyCard extends GreenCompanyCard {
         if(isApplied(game, player)) {
             if(isClosed) {
                 isClosed = false;
-                return new CardResult(type, CardResultTypes.COMPANY_OPENED);
+                return new CardResult(this, CardResultTypes.COMPANY_OPENED);
             }
 
             player.getPossibilities().setCanDestroyCity(true);
             player.getPossibilities().setDestroyCityBonus(value);
 
-            return new CardResult(type, CardResultTypes.CAN_DESTROY_CITY);
+            return new CardResult(this, CardResultTypes.CAN_DESTROY_CITY);
         }
 
-        return new CardResult(type, CardResultTypes.NONE);
+        return new CardResult(this, CardResultTypes.NONE);
     }
 }

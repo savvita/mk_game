@@ -21,16 +21,16 @@ abstract class BlueCompanyCard extends CompanyCard {
             if(isClosed) {
                 if(game.isActive(player)) {
                     isClosed = false;
-                    return new CardResult(type, CardResultTypes.COMPANY_OPENED);
+                    return new CardResult(this, CardResultTypes.COMPANY_OPENED);
                 }
-                return new CardResult(type, CardResultTypes.NONE);
+                return new CardResult(this, CardResultTypes.NONE);
             }
 
             int result = value + player.getAdditionalValue(activityType);
             player.getAccount().increase(result);
-            return new CardResult(type, CardResultTypes.MONEY, result, null, player);
+            return new CardResult(this, CardResultTypes.MONEY, result, null, player);
         }
 
-        return new CardResult(type, CardResultTypes.NONE);
+        return new CardResult(this, CardResultTypes.NONE);
     }
 }

@@ -21,10 +21,10 @@ public class CleaningCompanyCard extends VioletCompanyCard {
     public CardResult apply(Game game, Player player) {
         if(isApplied(game, player)) {
             player.getPossibilities().setCanCloseCompany(true);
-            return new CardResult(type, CardResultTypes.CAN_EXCHANGE_COMPANY);
+            return new CardResult(this, CardResultTypes.CAN_EXCHANGE_COMPANY);
         }
 
         player.getPossibilities().setCanCloseCompany(false);
-        return new CardResult(type, CardResultTypes.NONE);
+        return new CardResult(this, CardResultTypes.NONE);
     }
 }

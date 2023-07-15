@@ -33,14 +33,14 @@ public class CreditBankCard extends GreenCompanyCard {
         if(isApplied(game, player)) {
             if(isClosed) {
                 isClosed = false;
-                return new CardResult(type, CardResultTypes.COMPANY_OPENED);
+                return new CardResult(this, CardResultTypes.COMPANY_OPENED);
             }
 
             player.getAccount().decrease(value);
 
-            return new CardResult(type, CardResultTypes.MONEY, value, player, null);
+            return new CardResult(this, CardResultTypes.MONEY, value, player, null);
         }
 
-        return new CardResult(type, CardResultTypes.NONE);
+        return new CardResult(this, CardResultTypes.NONE);
     }
 }

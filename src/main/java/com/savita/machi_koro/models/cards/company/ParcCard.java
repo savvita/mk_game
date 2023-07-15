@@ -31,9 +31,9 @@ public class ParcCard  extends VioletCompanyCard {
             for(Player pl : players) {
                 pl.getAccount().setAmount(amount);
             }
-            return new CardResult(type, CardResultTypes.MONEY, amount, null, player);
+            return new CardResult(this, CardResultTypes.MONEY, amount, null, player);
         }
 
-        return new CardResult(type, CardResultTypes.NONE);
+        return new CardResult(this, CardResultTypes.NONE);
     }
 }

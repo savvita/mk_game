@@ -26,15 +26,15 @@ public class TransportCompanyCard extends GreenCompanyCard {
         if(isApplied(game, player)) {
             if(isClosed) {
                 isClosed = false;
-                return new CardResult(type, CardResultTypes.COMPANY_OPENED);
+                return new CardResult(this, CardResultTypes.COMPANY_OPENED);
             }
 
             player.getPossibilities().setCanGetAwayCompany(true);
             player.getPossibilities().setGetAwayCompanyBonus(value);
 
-            return new CardResult(type, CardResultTypes.CAN_GET_AWAY_COMPANY);
+            return new CardResult(this, CardResultTypes.CAN_GET_AWAY_COMPANY);
         }
 
-        return new CardResult(type, CardResultTypes.NONE);
+        return new CardResult(this, CardResultTypes.NONE);
     }
 }

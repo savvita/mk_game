@@ -26,16 +26,16 @@ public class WineryCard extends GreenCompanyCard {
         if(isApplied(game, player)) {
             if(isClosed) {
                 isClosed = false;
-                return new CardResult(type, CardResultTypes.COMPANY_OPENED);
+                return new CardResult(this, CardResultTypes.COMPANY_OPENED);
             }
 
             int amount = getAmount(game, player);
             int result = amount * (value + player.getAdditionalValue(activityType));
             player.getAccount().increase(result);
             isClosed = true;
-            return new CardResult(type, CardResultTypes.MONEY, result, null, player);
+            return new CardResult(this, CardResultTypes.MONEY, result, null, player);
         }
 
-        return new CardResult(type, CardResultTypes.NONE);
+        return new CardResult(this, CardResultTypes.NONE);
     }
 }

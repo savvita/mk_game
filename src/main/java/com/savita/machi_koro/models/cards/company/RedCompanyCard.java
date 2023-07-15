@@ -29,9 +29,9 @@ abstract class RedCompanyCard extends CompanyCard {
             if(isClosed) {
                 if(game.isActive(player)) {
                     isClosed = false;
-                    return new CardResult(type, CardResultTypes.COMPANY_OPENED);
+                    return new CardResult(this, CardResultTypes.COMPANY_OPENED);
                 }
-                return new CardResult(type, CardResultTypes.NONE);
+                return new CardResult(this, CardResultTypes.NONE);
             }
 
             Player activePlayer = game.getActivePlayer();
@@ -45,9 +45,9 @@ abstract class RedCompanyCard extends CompanyCard {
             activePlayer.getAccount().decrease(amount);
             player.getAccount().increase(amount);
 
-            return new CardResult(type, CardResultTypes.MONEY, amount, activePlayer, player);
+            return new CardResult(this, CardResultTypes.MONEY, amount, activePlayer, player);
         }
 
-        return new CardResult(type, CardResultTypes.NONE);
+        return new CardResult(this, CardResultTypes.NONE);
     }
 }

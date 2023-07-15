@@ -21,10 +21,10 @@ public class DownTownCard extends VioletCompanyCard {
     public CardResult apply(Game game, Player player) {
         if(isApplied(game, player)) {
             player.getPossibilities().setCanExchangeCompany(true);
-            return new CardResult(type, CardResultTypes.CAN_EXCHANGE_COMPANY);
+            return new CardResult(this, CardResultTypes.CAN_EXCHANGE_COMPANY);
         }
 
         player.getPossibilities().setCanExchangeCompany(false);
-        return new CardResult(type, CardResultTypes.NONE);
+        return new CardResult(this, CardResultTypes.NONE);
     }
 }

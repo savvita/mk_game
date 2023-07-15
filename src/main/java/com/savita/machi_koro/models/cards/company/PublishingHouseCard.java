@@ -33,8 +33,8 @@ public class PublishingHouseCard extends VioletCompanyCard {
                 pl.getAccount().decrease(amount);
                 sum += amount;
             }
-            return new CardResult(type, CardResultTypes.MONEY, sum, null, activePlayer);
+            return new CardResult(this, CardResultTypes.MONEY, sum, null, activePlayer);
         }
-        return new CardResult(type, CardResultTypes.NONE);
+        return new CardResult(this, CardResultTypes.NONE);
     }
 }

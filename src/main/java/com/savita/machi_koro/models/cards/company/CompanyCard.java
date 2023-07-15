@@ -10,7 +10,6 @@ public abstract class CompanyCard extends Card {
     protected int minDiceValue;
     protected int maxDiceValue;
     protected int value;
-    protected Cards type;
     protected ActivityTypes activityType;
     protected boolean isClosed;
     protected CompanyColors color;
@@ -25,9 +24,6 @@ public abstract class CompanyCard extends Card {
     }
     public int getValue() {
         return value;
-    }
-    public Cards getType() {
-        return type;
     }
     public ActivityTypes getActivityType() {
         return activityType;
