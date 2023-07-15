@@ -15,6 +15,7 @@ public class PlayerPossibilities {
     private int extraMoneyAmount;
     private int getAwayCompanyBonus;
     private int destroyCityBonus;
+    private int stealAmount;
     private boolean canGetAwayCompany;
     private boolean canDestroyCity;
     public PlayerPossibilities(Player player) {
@@ -127,5 +128,13 @@ public class PlayerPossibilities {
 
     public void setDestroyCityBonus(int destroyCityBonus) {
         this.destroyCityBonus = destroyCityBonus;
+    }
+
+    public int getStealAmount() {
+        return stealAmount;
+    }
+
+    public void setStealAmount(int stealAmount) {
+        this.stealAmount = stealAmount;
     }
 }

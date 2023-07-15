@@ -3,11 +3,14 @@ package com.savita.machi_koro.models.game;
 import com.savita.machi_koro.models.cards.Cards;
 import com.savita.machi_koro.models.cards.cities.*;
 import com.savita.machi_koro.models.cards.company.ActivityTypes;
+import com.savita.machi_koro.models.cards.company.BakeryCard;
 import com.savita.machi_koro.models.cards.company.CompanyCard;
+import com.savita.machi_koro.models.cards.company.WheatFieldCard;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class Player {
     /* FIELDS */
@@ -17,6 +20,7 @@ public class Player {
     private final List<CompanyCard> companies = new ArrayList<>();
     private final List<CityCard> cities = new ArrayList<>();
     private final HashMap<ActivityTypes, Integer> additionValues = new HashMap<>();
+    private final String name;
 
     /* END FIELDS */
 
@@ -42,11 +46,18 @@ public class Player {
         return diceCount;
     }
 
+    public String getName() {
+        return name;
+    }
+
     /* END GETTERS */
 
-    public Player() {
+    public Player(String name) {
+        this.name = name;
         initializeCity();
         possibilities = new PlayerPossibilities(this);
+        initializeCompanies();
+        account.setAmount(3);
     }
 
     private void initializeCity() {
@@ -59,6 +70,11 @@ public class Player {
         cities.add(new AirportCard());
         var city = cities.stream().filter(x -> x.getType() == Cards.TOWN_HALL).findFirst().get();
         city.build(this);
+    }
+
+    private void initializeCompanies() {
+        companies.add(new WheatFieldCard());
+        companies.add(new BakeryCard());
     }
 
     public void addAdditionalValue(ActivityTypes type, int value) {
@@ -94,7 +110,13 @@ public class Player {
     }
     public boolean buildCity(Cards type) {
         if(!possibilities.isCanBuild()) return false;
-        var city = cities.stream().filter(x -> x.getType() == type).findFirst().get();
+
+        Optional<CityCard> optionalCity = cities.stream().filter(x -> x.getType() == type).findFirst();
+        if(!optionalCity.isPresent()) {
+            return false;
+        }
+        var city = optionalCity.get();
+
         if(city.isBuilt()) return false;
 
         if(account.getAmount() < city.getPrice()) {
@@ -151,15 +173,15 @@ public class Player {
     }
 
     public boolean exchangeCompany(Player player, CompanyCard outgo, CompanyCard income) {
-        if(!possibilities.isCanExchangeCompany()) return false;
+//        if(!possibilities.isCanExchangeCompany()) return false;
 
         if(outgo.getActivityType() == ActivityTypes.LARGE_COMPANY || income.getActivityType() == ActivityTypes.LARGE_COMPANY) {
             return false;
         }
         player.removeCompany(income);
-        player.buildCompany(outgo);
+        player.addCompany(outgo);
 
-        buildCompany(income);
+        addCompany(income);
         removeCompany(outgo);
 
         possibilities.setCanExchangeCompany(false);

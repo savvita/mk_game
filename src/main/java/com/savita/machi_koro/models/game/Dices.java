@@ -1,5 +1,8 @@
 package com.savita.machi_koro.models.game;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 import java.util.Arrays;
 
 public class Dices {
@@ -8,6 +11,8 @@ public class Dices {
     public int[] getDices() {
         return dices;
     }
+    private int count;
+    private StringProperty value = new SimpleStringProperty();
     public int getSum() {
         return Arrays.stream(dices).sum();
     }
@@ -19,12 +24,37 @@ public class Dices {
         return false;
     }
     public void throwDices(int count) {
-        if(count > maxDiceCount) return;
+        if(count > maxDiceCount) {
+            this.count = 0;
+            return;
+        }
         for(int i = 0; i < count; i++) {
             this.dices[i] = 1 + (int) (Math.random() * 6);
         }
         for(int i = count; i < maxDiceCount; i++) {
             this.dices[i] = 0;
         }
+
+        this.count = count;
+        setValue(this.toString());
+    }
+
+    public String getValue() {
+        return value.get();
+    }
+
+    public StringProperty valueProperty() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value.set(value);
+    }
+
+    @Override
+    public String toString() {
+        if(count == 1) return String.valueOf(dices[0]);
+        if(count == 2) return String.format("%d - %d", dices[0], dices[1]);
+        return "";
     }
 }

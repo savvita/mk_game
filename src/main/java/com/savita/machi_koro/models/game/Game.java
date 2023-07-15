@@ -1,5 +1,7 @@
 package com.savita.machi_koro.models.game;
 
+import com.savita.machi_koro.events.Event;
+import com.savita.machi_koro.models.cards.Card;
 import com.savita.machi_koro.models.cards.Cards;
 import com.savita.machi_koro.models.cards.cities.CityCard;
 import com.savita.machi_koro.models.cards.company.*;
@@ -19,6 +21,8 @@ public class Game {
     private int activePlayerIdx = 0;
 
     /* END FIELDS */
+
+    public Event<String> onMessaging = new Event<>();
 
     /* GETTERS */
 
@@ -109,7 +113,13 @@ public class Game {
     }
 
 
-
+    public boolean destroyCity(Card card) {
+        var res = activePlayer.destroyCity(card.getType());
+        if(res) {
+            onMessaging.invoke(String.format("Игрок %s разрушает %s", activePlayer.getName(), card.getTitle()));
+        }
+        return res;
+    }
 
     public void throwDices(int count) {
         activePlayer.getPossibilities().setCanAddToDice(false);
@@ -117,6 +127,8 @@ public class Game {
         int actualCount = Math.min(Math.min(count, activePlayer.getDiceCount()), dices.maxDiceCount);
         dices.throwDices(actualCount);
         diceSum = dices.getSum();
+
+        onMessaging.invoke("Выпало : " + dices.getValue());
         handleCities();
     }
 
@@ -134,6 +146,7 @@ public class Game {
     private void throwToTrawler() {
         dices.throwDices(2);
         trawlerAmount = dices.getSum();
+        onMessaging.invoke("Выпало на траулер : " + trawlerAmount);
         System.out.println("Trawler : " + trawlerAmount);
     }
 
@@ -152,6 +165,7 @@ public class Game {
         player.addCompany(card);
         activePlayer.getAccount().increase(activePlayer.getPossibilities().getGetAwayCompanyBonus());
         activePlayer.getPossibilities().setCanGetAwayCompany(false);
+        onMessaging.invoke(String.format("Игрок %s передал игроку %s предприятие %s", activePlayer.getName(), player.getName(), card.getTitle()));
         return true;
     }
 
@@ -159,13 +173,15 @@ public class Game {
         var cities = activePlayer.getCities();
         for(CityCard city : cities) {
             var res = city.apply(this, activePlayer);
-            System.out.println(String.format("%s : %s (%d)", res.getCard(), res.getType(), res.getValue()));
+            onMessaging.invoke(res.toString());
+            System.out.println(String.format("%s : %s (%d)", res.getCard().getType(), res.getType(), res.getValue()));
         }
     }
 
     public void addToDice() {
         if(activePlayer.getPossibilities().isCanAddToDice()) {
             diceSum += 2;
+            onMessaging.invoke(String.format("Игрок %s добавил два к кубикам", activePlayer.getName()));
         }
         activePlayer.getPossibilities().setCanAddToDice(false);
     }
@@ -188,51 +204,35 @@ public class Game {
 
     private void handleRedCompanies() {
         for(int i = activePlayerIdx - 1; i >= 0; i--) {
-            var companies = players.get(i).getCompanies().stream().filter(x -> x.getColor() == CompanyColors.RED).toList();
-            for(CompanyCard card : companies) {
-                var result = card.apply(this, players.get(i));
-                //TODO override this
-                System.out.printf("%s: %s - %d\n", result.getCard(), result.getType(), result.getValue());
-            }
+            handleCompanies(players.get(i), CompanyColors.RED);
         }
 
-        for(int i = players.size() - 1; i >= activePlayerIdx; i--) {
-            var companies = players.get(i).getCompanies().stream().filter(x -> x.getColor() == CompanyColors.RED).toList();
-            for(CompanyCard card : companies) {
-                var result = card.apply(this, players.get(i));
-                //TODO override this
-                System.out.printf("%s: %s - %d\n", result.getCard(), result.getType(), result.getValue());
-            }
+        for(int i = players.size() - 1; i > activePlayerIdx; i--) {
+            handleCompanies(players.get(i), CompanyColors.RED);
+        }
+    }
+
+    private void handleCompanies(Player player, CompanyColors color) {
+        var companies = player.getCompanies().stream().filter(x -> x.getColor() == color).toList();
+        for(CompanyCard card : companies) {
+            var result = card.apply(this, player);
+            onMessaging.invoke(result.toString());
+            System.out.printf("%s: %s - %d\n", result.getCard().getType(), result.getType(), result.getValue());
         }
     }
 
     private void handleBlueCompanies() {
         for(Player player : players) {
-            var companies = player.getCompanies().stream().filter(x -> x.getColor() == CompanyColors.BLUE || x.getColor() == CompanyColors.GREEN).toList();
-            for(CompanyCard card : companies) {
-                var result = card.apply(this, player);
-                //TODO override this
-                System.out.printf("%s: %s - %d\n", result.getCard(), result.getType(), result.getValue());
-            }
+            handleCompanies(player, CompanyColors.BLUE);
         }
     }
 
     private void handleGreenCompanies() {
-        var companies = activePlayer.getCompanies().stream().filter(x -> x.getColor() == CompanyColors.BLUE || x.getColor() == CompanyColors.GREEN).toList();
-        for(CompanyCard card : companies) {
-            var result = card.apply(this, activePlayer);
-            //TODO override this
-            System.out.printf("%s: %s - %d\n", result.getCard(), result.getType(), result.getValue());
-        }
+        handleCompanies(activePlayer, CompanyColors.GREEN);
     }
 
     private void handleVioletCompanies() {
-        var companies = activePlayer.getCompanies().stream().filter(x -> x.getColor() == CompanyColors.VIOLET).toList();
-        for(CompanyCard card : companies) {
-            var result = card.apply(this, activePlayer);
-            //TODO override this
-            System.out.printf("%s: %s - %d\n", result.getCard(), result.getType(), result.getValue());
-        }
+        handleCompanies(activePlayer, CompanyColors.VIOLET);
     }
 
     public void addPlayer(Player player) {
@@ -248,6 +248,7 @@ public class Game {
         boolean result = activePlayer.buildCompany(card);
         if(result) {
             companies.remove(companies.stream().filter(x -> x.getType().equals(card.getType())).findFirst().get());
+            onMessaging.invoke(String.format("Игрок %s купил %s", activePlayer.getName(), card.getTitle()));
         }
         return result;
     }
@@ -265,6 +266,62 @@ public class Game {
             }
 
             activePlayer.getAccount().increase(sum);
+
+            onMessaging.invoke(String.format("Игрок %s закрыл предприятие %s и получил %d монет(ы)", activePlayer.getName(), card.getTitle(), sum));
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean deposit() {
+        if(activePlayer.getPossibilities().isCanDeposit()) {
+            boolean result = activePlayer.deposit();
+
+            if(result) {
+                onMessaging.invoke(String.format("Игрок %s сделал депозит", activePlayer.getName()));
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean takeExtraMoney() {
+        boolean result = activePlayer.takeExtraMoney();
+        if(result) {
+            onMessaging.invoke(String.format("Игрок %s взял дополнительные монеты", activePlayer.getName()));
+        }
+        return result;
+    }
+
+    public boolean exchangeCompanies(Player player, CompanyCard outgo, CompanyCard income) {
+        boolean result = activePlayer.exchangeCompany(player, outgo, income);
+        if(result) {
+            onMessaging.invoke(String.format("Игрок %s обменял предприятие %s с предприятием %s игрока %s",
+                    activePlayer.getName(), outgo.getTitle(), income.getTitle(), player.getName()));
+        }
+
+        return result;
+    }
+
+    public boolean isCanBuilt(Player player, Card card) {
+        if(!isActive(player)) return false;
+        if(!player.getPossibilities().isCanBuild()) return false;
+        if(card instanceof CompanyCard && companies.stream().filter(x -> x.getType() == card.getType()).count() == 0) return false;
+        if(card instanceof CityCard && player.hasCityCard(card.getType())) return false;
+
+        // TODO add if game started
+        return true;
+    }
+
+    public boolean steal(Player player) {
+        if(player == activePlayer) return false;
+
+        if(activePlayer.getPossibilities().isCanSteal()) {
+            int result = activePlayer.steal(player, activePlayer.getPossibilities().getStealAmount());
+            onMessaging.invoke(String.format("Игрок %s взял у игрока %s %d монет(ы)", activePlayer.getName(), player.getName(), result));
 
             return true;
         }
