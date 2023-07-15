@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.savita.machi_koro.controllers.ExchangeController"
+            prefHeight="400.0" prefWidth="600.0">
+    <top>
+        <VBox alignment="CENTER" spacing="10">
+            <padding>
+                <Insets left="20" right="20" top="20" bottom="20" />
+            </padding>
+            <Label style="-fx-font-size:14px;-fx-font-weight: bold;">Мои предприятия</Label>
+            <FlowPane fx:id="myCompaniesPane" alignment="CENTER" />
+        </VBox>
+    </top>
+    <center>
+        <BorderPane>
+            <top>
+                <VBox alignment="CENTER" spacing="10">
+                    <padding>
+                        <Insets left="10" right="10" top="10" bottom="10"/>
+                    </padding>
+                    <Label style="-fx-font-size:14px; -fx-font-weight: bold;">Выберите игрока</Label>
+                    <FlowPane fx:id="enemiesPane" alignment="CENTER" hgap="5.0"/>
+                </VBox>
+            </top>
+            <bottom>
+                <BorderPane>
+                    <center>
+                        <FlowPane fx:id="enemyCompaniesPane" alignment="CENTER" />
+                    </center>
+                </BorderPane>
+            </bottom>
+        </BorderPane>
+    </center>
+    <bottom>
+        <GridPane minHeight="300" hgap="10">
+            <padding>
+                <Insets bottom="20" right="20" left="20" top="20"/>
+            </padding>
+            <columnConstraints>
+                <ColumnConstraints percentWidth="100"/>
+                <ColumnConstraints percentWidth="20"/>
+                <ColumnConstraints percentWidth="100"/>
+            </columnConstraints>
+            <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" minHeight="250"
+                  style="-fx-border-style: solid; -fx-border-color: black; -fx-border-width: 1px;">
+                <padding>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                </padding>
+                <Label style="-fx-font-size: 18px; -fx-font-weight: bold;">Мое предприятие</Label>
+                <Label fx:id="myPreviewTitle" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                <Label fx:id="myPreviewPrice" style="-fx-font-size: 16px;"/>
+                <Label fx:id="myPreviewDescription" style="-fx-font-size: 16px;" wrapText="true"/>
+            </VBox>
+            <Button fx:id="exchangeBtn" GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="Infinity">Обменять
+            </Button>
+            <VBox GridPane.columnIndex="2" GridPane.rowIndex="0" minHeight="250"
+                  style="-fx-border-style: solid; -fx-border-color: black; -fx-border-width: 1px;">
+                <padding>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                </padding>
+                <Label fx:id="enemyLabel" style="-fx-font-size: 18px; -fx-font-weight: bold;">Предприятие
+                    противника
+                </Label>
+                <Label fx:id="enemyPreviewTitle" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                <Label fx:id="enemyPreviewPrice" style="-fx-font-size: 16px;"/>
+                <Label fx:id="enemyPreviewDescription" style="-fx-font-size: 16px;" wrapText="true"/>
+            </VBox>
+        </GridPane>
+    </bottom>
+</BorderPane>
