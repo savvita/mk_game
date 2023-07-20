@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.savita.machi_koro.client.controllers.AuthController">
+    <left>
+        <StackPane>
+            <ImageView fx:id="icon" fitWidth="100" fitHeight="100" />
+        </StackPane>
+    </left>
+    <center>
+        <FlowPane orientation="VERTICAL" alignment="CENTER">
+            <GridPane maxWidth="Infinity" hgap="5" vgap="5">
+                <columnConstraints>
+                    <ColumnConstraints />
+                    <ColumnConstraints />
+                </columnConstraints>
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="0">Логин</Label>
+                <TextField fx:id="login" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="1">Пароль</Label>
+                <PasswordField fx:id="password" GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="Infinity" />
+                <Label fx:id="passwordConfirmationLabel" visible="false" GridPane.columnIndex="0" GridPane.rowIndex="2">Подтвердите пароль</Label>
+                <PasswordField fx:id="passwordConfirmation" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" maxWidth="Infinity" />
+
+                <FlowPane GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="2" alignment="CENTER_RIGHT" hgap="5" vgap="5">
+                    <Label fx:id="link" />
+                    <Button fx:id="authBtn">Войти</Button>
+                    <Button fx:id="cancelBtn">Отмена</Button>
+                </FlowPane>
+            </GridPane>
+        </FlowPane>
+    </center>
+</BorderPane>
