@@ -2,7 +2,6 @@ package com.savita.machi_koro.models.cards.company;
 
 import com.savita.machi_koro.models.cards.Card;
 import com.savita.machi_koro.models.cards.CardResult;
-import com.savita.machi_koro.models.cards.Cards;
 import com.savita.machi_koro.models.game.Game;
 import com.savita.machi_koro.models.game.Player;
 
@@ -40,5 +39,9 @@ public abstract class CompanyCard extends Card {
 
     public CompanyColors getColor() {
         return color;
+    }
+
+    public void setClosed(boolean closed) {
+        isClosed = closed;
     }
 }

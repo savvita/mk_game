@@ -1,7 +1,5 @@
 package com.savita.machi_koro.models.game;
 
-import com.savita.machi_koro.models.cards.Cards;
-
 public class BankAccount {
     private int amount;
     private int depositCount;
@@ -21,6 +19,11 @@ public class BankAccount {
     public int getDepositCount() {
         return depositCount;
     }
+
+    public void setDepositCount(int depositCount) {
+        this.depositCount = depositCount;
+    }
+
     public boolean deposit() {
         if(amount > 0) {
             depositCount++;

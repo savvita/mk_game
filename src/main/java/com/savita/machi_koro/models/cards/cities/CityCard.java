@@ -3,7 +3,6 @@ package com.savita.machi_koro.models.cards.cities;
 import com.savita.machi_koro.models.cards.Card;
 import com.savita.machi_koro.models.cards.CardResult;
 import com.savita.machi_koro.models.cards.CardResultTypes;
-import com.savita.machi_koro.models.cards.Cards;
 import com.savita.machi_koro.models.game.Game;
 import com.savita.machi_koro.models.game.Player;
 
@@ -34,5 +33,9 @@ public abstract class CityCard extends Card {
     }
     public void destroy(Player player) {
         isBuilt = false;
+    }
+
+    public void setBuilt(boolean built) {
+        isBuilt = built;
     }
 }

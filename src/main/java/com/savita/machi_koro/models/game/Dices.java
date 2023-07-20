@@ -12,7 +12,7 @@ public class Dices {
         return dices;
     }
     private int count;
-    private StringProperty value = new SimpleStringProperty();
+    private transient StringProperty value = new SimpleStringProperty();
     public int getSum() {
         return Arrays.stream(dices).sum();
     }
@@ -49,6 +49,17 @@ public class Dices {
 
     public void setValue(String value) {
         this.value.set(value);
+    }
+
+    public void setDices(int[] values) {
+        for(int i = 0; i < this.dices.length && i < values.length; i++) {
+            this.dices[i] = values[i];
+        }
+        for(int i = values.length; i < this.dices.length; i++) {
+            this.dices[i] = 0;
+        }
+        count = Math.min(this.dices.length, (int)Arrays.stream(values).filter(x -> x != 0).count());
+        setValue(this.toString());
     }
 
     @Override

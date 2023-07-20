@@ -22,6 +22,8 @@ public class PlayerPossibilities {
         this.player = player;
     }
 
+    public PlayerPossibilities(){}
+
     public boolean isCanAddToDice() {
         return canAddToDice;
     }
@@ -87,7 +89,7 @@ public class PlayerPossibilities {
     }
 
     public boolean isCanDeposit() {
-        return player.getCompanies().stream().filter(x -> x.getType() == Cards.VENTURE_FUND).count() > 0;
+        return player.getCompanies().stream().anyMatch(x -> x.getType() == Cards.VENTURE_FUND);
     }
 
     public int getExtraMoneyAmount() {

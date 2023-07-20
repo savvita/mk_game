@@ -1,19 +1,14 @@
-package com.savita.machi_koro.controllers;
+package com.savita.machi_koro.client.controllers;
 
-import com.savita.machi_koro.MK;
+import com.savita.machi_koro.log.Log;
 import com.savita.machi_koro.models.cards.Card;
-import com.savita.machi_koro.models.cards.Cards;
 import com.savita.machi_koro.models.cards.cities.CityCard;
 import com.savita.machi_koro.models.cards.company.CompanyCard;
 import com.savita.machi_koro.models.game.Game;
 import com.savita.machi_koro.models.game.Player;
-import javafx.beans.binding.Binding;
-import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
@@ -21,8 +16,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
-import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -38,18 +31,20 @@ public class MKController {
     private Player player;
     private List<Player> enemies;
     private final ObjectProperty<Card> selectedCard = new SimpleObjectProperty<>();
+    private final Log log = new Log(System.out::println);
 
     @FXML private FlowPane fieldPane;
 
     @FXML private TabPane previewTab;
     @FXML private Label previewTitle;
-    @FXML private Text previewPrice;
-    @FXML private Text previewDescription;
+    @FXML private Label previewPrice;
+    @FXML private Label previewDescription;
     @FXML private Button previewBtn;
 
     @FXML private HBox playerCities;
     @FXML private HBox playerCompanies;
     @FXML private Label bankAmount;
+    @FXML private Label playerName;
     @FXML private Label player1name;
     @FXML private Label player1bank;
     @FXML private FlowPane player1Cities;
@@ -82,9 +77,14 @@ public class MKController {
     @FXML private TextArea results;
     @FXML private FlowPane actions;
 
-
     @FXML
     private void initialize() {
+        actions.getChildren().clear();
+        bindPreview();
+        initializeButtons();
+    }
+
+    private void initializeDices() {
         Path path = Paths.get("images", "dice.png");
         Image image = new Image("file:" + path);
         dicesImage.setImage(image);
@@ -93,58 +93,28 @@ public class MKController {
         is.setOffsetX(0.5f);
         is.setOffsetY(0.5f);
         dicesValue.setEffect(is);
-        Binding<String> selectedCardTitle = new ObjectBinding<>() {
-            { bind(selectedCard); }
-            @Override
-            protected String computeValue() {
-                return selectedCard.get()==null ? "" : selectedCard.get().getTitle();
-            }
-        };
 
-        previewTitle.textProperty().bind(selectedCardTitle);
-        Binding<String> selectedCardPrice = new ObjectBinding<>() {
-            { bind(selectedCard); }
-            @Override
-            protected String computeValue() {
-                return selectedCard.get()==null ? "" : String.format("Стоимость : %d", selectedCard.get().getPrice());
-            }
-        };
+        dicesValue.textProperty().bind(game.getDices().valueProperty());
+    }
 
-        previewPrice.textProperty().bind(selectedCardPrice);
-        Binding<String> selectedCardDescription = new ObjectBinding<>() {
-            { bind(selectedCard); }
-            @Override
-            protected String computeValue() {
-                return selectedCard.get()==null ? "" : selectedCard.get().getDescription();
-            }
-        };
-
-        previewDescription.textProperty().bind(selectedCardDescription);
-
+    private void bindPreview() {
+        GraphicHelper.bindProperty(selectedCard, Card::getTitle, previewTitle);
+        GraphicHelper.bindProperty(selectedCard, (card) -> String.format("Стоимость : %d", card.getPrice()), previewPrice);
+        GraphicHelper.bindProperty(selectedCard, Card::getDescription, previewDescription);
     }
 
     public void initData(Game game, Player player) {
         this.game = game;
         this.player = player;
 
+        initializeDices();
         setPreviewBtnVisibility();
-
-        enemies = this.game.getPlayers().stream().filter(x -> x != player).toList();
-        drawField();
-        drawPlayersCities();
-        drawPlayersCompanies();
-        drawBankAmount();
-        drawPlayers();
-        initializeButtons();
-        dicesValue.textProperty().bind(game.getDices().valueProperty());
+        refresh();
 
         this.game.onMessaging.add(x -> results.appendText(x + "\n"));
+        this.game.onUpdated.add((x) -> refresh());
 
-        this.game.start();
-
-        if(game.isActive(player)) {
-            move();
-        }
+        playerName.setText(player.getName());
     }
 
     private void handleDices() {
@@ -155,47 +125,79 @@ public class MKController {
         drawPlayers();
     }
 
+    private void refresh() {
+        enemies = this.game.getPlayers().stream().filter(x -> x != player).toList();
+        drawField();
+        drawPlayersCities();
+        drawPlayersCompanies();
+        drawBankAmount();
+        drawPlayers();
+        game.getNews().forEach(x -> results.appendText(x + "\n"));
 
+        if(game.getWinner() != null) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
+            alert.setTitle("Игра окончена");
+            alert.setContentText(String.format("Игрок %s выиграл", game.getWinner().getName()));
+
+            alert.showAndWait();
+        }
+
+        if(game.isStarted() && game.isActive(player)) {
+            move();
+        }
+    }
+
+    private void buyCard() {
+        if(selectedCard.get() instanceof CompanyCard company) {
+            var res = game.buyCompany(company);
+            if(res) {
+                drawField();
+                drawPlayersCompanies();
+                drawBankAmount();
+                setPreviewBtnVisibility();
+                game.sendChanges();
+            }
+        } else if(selectedCard.get() instanceof CityCard city) {
+            var res = game.buildCity(city.getType());
+            if(res) {
+                drawPlayersCities();
+                drawBankAmount();
+                setPreviewBtnVisibility();
+                game.sendChanges();
+            }
+        }
+    }
+
+    private void makeDeposit() {
+        var result = game.deposit();
+        if(result) {
+            showActions();
+            game.sendChanges();
+            drawBankAmount();
+        }
+    }
 
     private void initializeButtons() {
-        previewBtn.setOnMouseClicked(x -> {
-            if(selectedCard != null) {
-                if(selectedCard.get() instanceof CompanyCard company) {
-                    var res = game.buyCompany(company);
-                    if(res) {
-                        drawField();
-                        drawPlayersCompanies();
-                        drawBankAmount();
-                        setPreviewBtnVisibility();
-                    }
-                } else if(selectedCard.get() instanceof CityCard city) {
-                    var res = player.buildCity(city.getType());
-                    if(res) {
-                        drawPlayersCities();
-                        drawBankAmount();
-                        setPreviewBtnVisibility();
-                    }
-                }
-            }
-        });
+        previewBtn.setOnMouseClicked(x -> buyCard());
 
         throwDiceBtn.setOnMouseClicked(x -> throwDices(1));
         throwTwoDicesBtn.setOnMouseClicked(x -> throwDices(2));
-        rethrowDicesBtn.setOnMouseClicked(x -> move());
-        keepDicesBtn.setOnMouseClicked(x -> handleDices());
+        rethrowDicesBtn.setOnMouseClicked(x -> {
+            move();
+            game.sendChanges();
+        });
+        keepDicesBtn.setOnMouseClicked(x -> {
+            handleDices();
+            game.sendChanges();
+        });
 
         destroyCityBtn.setOnAction(x -> {
             Stage stage = (Stage) destroyCityBtn.getScene().getWindow();
             showPlayersCitiesStage(stage, player);
         });
 
-        makeDepositsBtn.setOnAction(x -> {
-            var res = game.deposit();
-            if(res) {
-                showActions();
-                drawBankAmount();
-            }
-        });
+        makeDepositsBtn.setOnAction(x -> makeDeposit());
 
         closeCompanyBtn.setOnAction(x -> {
             Stage stage = (Stage) closeCompanyBtn.getScene().getWindow();
@@ -212,17 +214,29 @@ public class MKController {
             showExchangeStage(stage);
         });
 
-        takeMoneyBtn.setOnAction(x -> {
-            if(game.takeExtraMoney()) {
-                drawBankAmount();
-                showActions();
-                setPreviewBtnVisibility();
-            }
+        takeMoneyBtn.setOnAction(x -> takeExtraMoney());
+
+        finishMoveBtn.setOnAction(x -> {
+            game.goNext();
+            game.sendChanges();
+            actions.getChildren().clear();
+            refresh();
         });
 
-        // TODO override this
-        exchangeCompanyBtn.setOnAction(x -> move());
+        addTwoToDicesBtn.setOnAction((x -> {
+            game.addToDice();
+            game.sendChanges();
+        }));
 
+    }
+
+    private void takeExtraMoney() {
+        if(game.takeExtraMoney()) {
+            drawBankAmount();
+            showActions();
+            setPreviewBtnVisibility();
+            game.sendChanges();
+        }
     }
 
     private void setPreviewBtnVisibility() {
@@ -236,6 +250,19 @@ public class MKController {
     private void throwDices(int count) {
         game.throwDices(count);
 
+        boolean additionalAction = showAdditionalDiceActions();
+
+        if(additionalAction) {
+            actions.getChildren().add(keepDicesBtn);
+        } else {
+            handleDices();
+        }
+
+        previewTab.getSelectionModel().select(1);
+        game.sendChanges();
+    }
+
+    private boolean showAdditionalDiceActions() {
         actions.getChildren().clear();
 
         boolean additionalAction = false;
@@ -248,11 +275,7 @@ public class MKController {
             additionalAction = true;
         }
 
-        if(additionalAction) {
-            actions.getChildren().add(keepDicesBtn);
-        } else {
-            handleDices();
-        }
+        return additionalAction;
     }
 
     private void showActions() {
@@ -294,13 +317,11 @@ public class MKController {
         }
     }
 
-
-
     /* ENEMIES */
     private void drawPlayers() {
-        drawPlayer(enemies.get(0), player1name, player1bank, player1Cities, player1Companies);
-        drawPlayer(enemies.get(1), player2name, player2bank, player2Cities, player2Companies);
-        drawPlayer(enemies.get(2), player3name, player3bank, player3Cities, player3Companies);
+        if(enemies.size() > 0) drawPlayer(enemies.get(0), player1name, player1bank, player1Cities, player1Companies);
+        if(enemies.size() > 1) drawPlayer(enemies.get(1), player2name, player2bank, player2Cities, player2Companies);
+        if(enemies.size() > 2) drawPlayer(enemies.get(2), player3name, player3bank, player3Cities, player3Companies);
     }
     private void drawPlayer(Player player, Label name, Label bank, FlowPane cities, FlowPane companies) {
         name.setText(player.getName());
@@ -311,15 +332,13 @@ public class MKController {
     }
     private void drawEnemyCities(Player player, FlowPane pane) {
         pane.getChildren().clear();
-        var cities = player.getCities().stream().filter(x -> x.isBuilt()).toList();
+        var cities = player.getCities().stream().filter(CityCard::isBuilt).toList();
 
-        for(int i = 0; i < cities.size(); i++) {
-            var city = cities.get(i);
-
-            Label lbl = new Label(cities.get(i).getTitle());
+        for (CityCard city : cities) {
+            Label lbl = new Label(city.getTitle());
             lbl.setOnMouseClicked(mouseEvent -> {
                 previewTab.getSelectionModel().select(0);
-                selectedCard .set(city);
+                selectedCard.set(city);
             });
             pane.getChildren().add(lbl);
         }
@@ -327,8 +346,8 @@ public class MKController {
     private Label getCompanyLabel(List<CompanyCard> cards) {
         var card = cards.get(0);
         String text = String.format("%s (всего %d", card.getTitle(), cards.size());
-        if(cards.stream().anyMatch(x -> x.isClosed())) {
-            int count = (int)cards.stream().filter(x -> x.isClosed()).count();
+        if(cards.stream().anyMatch(CompanyCard::isClosed)) {
+            int count = (int)cards.stream().filter(CompanyCard::isClosed).count();
             text += String.format(", закрыто %d)", count);
         } else {
             text += ")";
@@ -427,12 +446,13 @@ public class MKController {
                     showActions();
                     drawPlayersCities();
                     drawBankAmount();
+                    game.sendChanges();
                     showActions();
                 }
             };
             StageHelper.showPlayersCitiesStage(owner, player, onDestroyed);
         } catch (IOException e) {
-            System.err.println("Cannot load resource : " + e.getMessage());
+            log.error("Cannot load resource : " + e.getMessage());
         }
     }
 
@@ -445,12 +465,13 @@ public class MKController {
                     drawBankAmount();
                     drawPlayers();
                     showActions();
+                    game.sendChanges();
                 }
             };
 
             StageHelper.showFieldStage(owner, game, onClosed);
         } catch (IOException e) {
-            System.err.println("Cannot load resource : " + e.getMessage());
+            log.error("Cannot load resource : " + e.getMessage());
         }
     }
 
@@ -462,26 +483,28 @@ public class MKController {
                     drawBankAmount();
                     drawPlayers();
                     showActions();
+                    game.sendChanges();
                 }
             };
 
             StageHelper.showEnemiesStage(owner, enemies, onSteal);
         } catch (IOException e) {
-            System.err.println("Cannot load resource : " + e.getMessage());
+            log.error("Cannot load resource : " + e.getMessage());
         }
     }
 
     private void showExchangeStage(Stage owner) {
         try {
-            Consumer onExchange = obj -> {
+            Consumer<Object> onExchange = obj -> {
                 drawPlayersCompanies();
                 drawPlayers();
                 showActions();
+                game.sendChanges();
             };
 
             StageHelper.showExchangeStage(owner, game, onExchange);
         } catch (IOException e) {
-            System.err.println("Cannot load resource : " + e.getMessage());
+            log.error("Cannot load resource : " + e.getMessage());
         }
     }
 

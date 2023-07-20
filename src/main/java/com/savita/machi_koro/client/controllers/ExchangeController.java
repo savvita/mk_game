@@ -1,4 +1,4 @@
-package com.savita.machi_koro.controllers;
+package com.savita.machi_koro.client.controllers;
 
 import com.savita.machi_koro.events.Event;
 import com.savita.machi_koro.models.cards.Card;
@@ -17,7 +17,6 @@ import javafx.scene.layout.FlowPane;
 
 import java.util.Comparator;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ExchangeController {
@@ -43,7 +42,7 @@ public class ExchangeController {
 
     @FXML private Button exchangeBtn;
 
-    public Event onExchanged = new Event();
+    public Event<Object> onExchanged = new Event<>();
 
     public void initData(Game game) {
         this.game = game;
@@ -75,26 +74,14 @@ public class ExchangeController {
         exchangeBtn.visibleProperty().bind(binding);
     }
 
-    private void bindProperty(ObjectProperty<CompanyCard> objectProperty, Function<Card, String> selector, Label node) {
-        Binding<String> binding = new ObjectBinding<>() {
-            { bind(objectProperty); }
-            @Override
-            protected String computeValue() {
-                return objectProperty.get() == null ? "" : selector.apply(objectProperty.get());
-            }
-        };
-
-        node.textProperty().bind(binding);
-    }
-
     private void bindPreview() {
-        bindProperty(selectedMyCard, Card::getTitle, myPreviewTitle);
-        bindProperty(selectedMyCard, x -> String.format("Стоимость : %d", x.getPrice()), myPreviewPrice);
-        bindProperty(selectedMyCard, Card::getDescription, myPreviewDescription);
+        GraphicHelper.<CompanyCard>bindProperty(selectedMyCard, Card::getTitle, myPreviewTitle);
+        GraphicHelper.<CompanyCard>bindProperty(selectedMyCard, x -> String.format("Стоимость : %d", x.getPrice()), myPreviewPrice);
+        GraphicHelper.<CompanyCard>bindProperty(selectedMyCard, Card::getDescription, myPreviewDescription);
 
-        bindProperty(selectedEnemyCard, Card::getTitle, enemyPreviewTitle);
-        bindProperty(selectedEnemyCard, x -> String.format("Стоимость : %d", x.getPrice()), enemyPreviewPrice);
-        bindProperty(selectedEnemyCard, Card::getDescription, enemyPreviewDescription);
+        GraphicHelper.<CompanyCard>bindProperty(selectedEnemyCard, Card::getTitle, enemyPreviewTitle);
+        GraphicHelper.<CompanyCard>bindProperty(selectedEnemyCard, x -> String.format("Стоимость : %d", x.getPrice()), enemyPreviewPrice);
+        GraphicHelper.<CompanyCard>bindProperty(selectedEnemyCard, Card::getDescription, enemyPreviewDescription);
     }
 
     private void drawEnemies() {

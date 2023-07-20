@@ -1,19 +1,19 @@
-package com.savita.machi_koro.controllers;
+package com.savita.machi_koro.client.controllers;
 
 import com.savita.machi_koro.models.cards.Card;
 import com.savita.machi_koro.models.cards.Cards;
 import com.savita.machi_koro.models.cards.cities.CityCard;
 import com.savita.machi_koro.models.cards.company.CompanyCard;
-import com.savita.machi_koro.models.cards.company.CompanyColors;
 import com.savita.machi_koro.models.game.Player;
+import javafx.beans.binding.Binding;
+import javafx.beans.binding.ObjectBinding;
+import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.effect.BlurType;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.effect.Shadow;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -25,11 +25,12 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class GraphicHelper {
-    public static final double MAX_CARD_WIDTH = 90;
-    public static final double MAX_CARD_HEIGHT = 170;
+    public static final double MAX_CARD_WIDTH = 65;
+    public static final double MAX_CARD_HEIGHT = 130;
     public static final int STACK_OFFSET = 7;
     public static final int H_GAP = 5;
     public static final int V_GAP = 5;
@@ -55,6 +56,19 @@ public class GraphicHelper {
 
     public static void clearBlackout(GraphicsContext gc) {
         gc.setEffect(null);
+    }
+
+
+    public static <T> void  bindProperty(ObjectProperty<T> objectProperty, Function<T, String> selector, Label node) {
+        Binding<String> binding = new ObjectBinding<>() {
+            { bind(objectProperty); }
+            @Override
+            protected String computeValue() {
+                return objectProperty.get() == null ? "" : selector.apply(objectProperty.get());
+            }
+        };
+
+        node.textProperty().bind(binding);
     }
 
     public static void drawCity(GraphicsContext gc, CityCard card, double x, double y) {

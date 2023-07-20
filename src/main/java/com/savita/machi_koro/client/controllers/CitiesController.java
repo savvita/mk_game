@@ -1,4 +1,4 @@
-package com.savita.machi_koro.controllers;
+package com.savita.machi_koro.client.controllers;
 
 import com.savita.machi_koro.events.Event;
 import com.savita.machi_koro.models.cards.Card;

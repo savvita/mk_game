@@ -7,8 +7,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.text.TextFlow?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.savita.machi_koro.controllers.MKController">
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.savita.machi_koro.client.controllers.MKController">
     <left>
         <BorderPane minWidth="220" maxWidth="220" style="-fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
             <top>
@@ -25,29 +25,25 @@
                     <Tab text="Город" closable="false">
                         <VBox>
                             <HBox.margin>
-                                <Insets bottom="5.0" left="5.0" right="15.0" top="5.0" />
+                                <Insets bottom="5.0" left="5.0" right="15.0" top="5.0"/>
                             </HBox.margin>
                             <padding>
-                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                             </padding>
-                            <children>
-                                <Label style="-fx-font-size: 13px; -fx-font-weight: bold;">Город</Label>
-                                <FlowPane fx:id="player1Cities" orientation="VERTICAL" />
-                            </children>
+                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold;">Город</Label>
+                            <FlowPane fx:id="player1Cities" orientation="VERTICAL"/>
                         </VBox>
                     </Tab>
                     <Tab text="Предприятия" closable="false">
                         <VBox>
                             <HBox.margin>
-                                <Insets bottom="5.0" left="5.0" right="15.0" top="5.0" />
+                                <Insets bottom="5.0" left="5.0" right="15.0" top="5.0"/>
                             </HBox.margin>
                             <padding>
-                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                             </padding>
-                            <children>
-                                <Label style="-fx-font-size: 13px; -fx-font-weight: bold;">Предприятия</Label>
-                                <FlowPane fx:id="player1Companies" orientation="VERTICAL" />
-                            </children>
+                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold;">Предприятия</Label>
+                            <FlowPane fx:id="player1Companies" orientation="VERTICAL"/>
                         </VBox>
                     </Tab>
                 </TabPane>
@@ -70,29 +66,25 @@
                     <Tab text="Город" closable="false">
                         <VBox>
                             <HBox.margin>
-                                <Insets bottom="5.0" left="5.0" right="15.0" top="5.0" />
+                                <Insets bottom="5.0" left="5.0" right="15.0" top="5.0"/>
                             </HBox.margin>
                             <padding>
-                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                             </padding>
-                            <children>
-                                <Label style="-fx-font-size: 13px; -fx-font-weight: bold;">Город</Label>
-                                <FlowPane fx:id="player3Cities" orientation="VERTICAL" />
-                            </children>
+                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold;">Город</Label>
+                            <FlowPane fx:id="player3Cities" orientation="VERTICAL"/>
                         </VBox>
                     </Tab>
                     <Tab text="Предприятия" closable="false">
                         <VBox>
                             <HBox.margin>
-                                <Insets bottom="5.0" left="5.0" right="15.0" top="5.0" />
+                                <Insets bottom="5.0" left="5.0" right="15.0" top="5.0"/>
                             </HBox.margin>
                             <padding>
-                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                             </padding>
-                            <children>
-                                <Label style="-fx-font-size: 13px; -fx-font-weight: bold;">Предприятия</Label>
-                                <FlowPane fx:id="player3Companies" orientation="VERTICAL" />
-                            </children>
+                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold;">Предприятия</Label>
+                            <FlowPane fx:id="player3Companies" orientation="VERTICAL"/>
                         </VBox>
                     </Tab>
                 </TabPane>
@@ -100,15 +92,15 @@
         </BorderPane>
     </right>
     <top>
-        <BorderPane minHeight="220" maxHeight="220" style="-fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
+        <BorderPane minHeight="180" maxHeight="220" style="-fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
             <left>
-                <StackPane minWidth="220" minHeight="220" style="-fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
+                <StackPane minWidth="220" minHeight="180" style="-fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
                     <padding>
                         <Insets right="10.0" left="10.0" top="10.0" bottom="10.0" />
                     </padding>
                     <Label fx:id="dicesValue" contentDisplay="TOP" style="-fx-font-size: 30px; -fx-font-weight: bold;">
                         <graphic>
-                            <ImageView fx:id="dicesImage" fitWidth="150" fitHeight="150" />
+                            <ImageView fx:id="dicesImage" fitWidth="120" fitHeight="120" />
                         </graphic>
                     </Label>
                 </StackPane>
@@ -123,21 +115,17 @@
                     <HBox>
                         <VBox>
                             <HBox.margin>
-                                <Insets bottom="5.0" left="0.0" right="15.0" top="5.0" />
+                                <Insets bottom="5.0" right="15.0" top="5.0"/>
                             </HBox.margin>
-                            <children>
-                                <Label style="-fx-font-size: 13px; -fx-font-weight: bold;">Город</Label>
-                                <FlowPane fx:id="player2Cities" orientation="VERTICAL" />
-                            </children>
+                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold;">Город</Label>
+                            <FlowPane fx:id="player2Cities" orientation="VERTICAL"/>
                         </VBox>
                         <VBox>
                             <HBox.margin>
-                                <Insets bottom="5.0" left="5.0" right="15.0" top="5.0" />
+                                <Insets bottom="5.0" left="5.0" right="15.0" top="5.0"/>
                             </HBox.margin>
-                            <children>
-                                <Label style="-fx-font-size: 13px; -fx-font-weight: bold;">Предприятия</Label>
-                                <FlowPane fx:id="player2Companies" orientation="VERTICAL" />
-                            </children>
+                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold;">Предприятия</Label>
+                            <FlowPane fx:id="player2Companies" orientation="VERTICAL"/>
                         </VBox>
                     </HBox>
 
@@ -147,28 +135,25 @@
         </BorderPane>
     </top>
     <center>
-        <FlowPane fx:id="fieldPane" style="-fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;"></FlowPane>
+        <FlowPane fx:id="fieldPane" style="-fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;"/>
     </center>
     <bottom>
-        <BorderPane fx:id="playerPane" maxHeight="300" style="-fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
+        <BorderPane maxHeight="200" style="-fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
             <left>
                 <TabPane fx:id="previewTab" maxWidth="400">
                     <Tab text="Просмотр" closable="false">
                         <VBox>
                             <padding>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                             </padding>
-                            <children>
-                                <AnchorPane>
-                                    <Label fx:id="previewTitle" style="-fx-font-size: 18px; -fx-font-weight: bold;" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="5" />
-                                    <Button fx:id="previewBtn" AnchorPane.rightAnchor="5">Купить</Button>
-                                </AnchorPane>
+                            <AnchorPane>
+                                <Label fx:id="previewTitle" style="-fx-font-size: 18px; -fx-font-weight: bold;"
+                                       AnchorPane.leftAnchor="0" AnchorPane.topAnchor="5"/>
+                                <Button fx:id="previewBtn" AnchorPane.rightAnchor="5">Купить</Button>
+                            </AnchorPane>
 
-                                <Text fx:id="previewPrice" style="-fx-font-size: 16px;" />
-                                <TextFlow>
-                                    <Text fx:id="previewDescription" style="-fx-font-size: 16px;" />
-                                </TextFlow>
-                            </children>
+                            <Label fx:id="previewPrice" style="-fx-font-size: 16px;"/>
+                            <Label fx:id="previewDescription" style="-fx-font-size: 16px;" wrapText="true"/>
                         </VBox>
                     </Tab>
                     <Tab text="Результаты" closable="false">
@@ -204,7 +189,10 @@
                         <Insets right="10.0" left="10.0" top="10.0" bottom="10.0" />
                     </padding>
                     <top>
-                        <Label fx:id="bankAmount" maxWidth="Infinity" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+                        <VBox>
+                            <Label fx:id="playerName" maxWidth="Infinity" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+                            <Label fx:id="bankAmount" maxWidth="Infinity" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+                        </VBox>
                     </top>
                     <center>
                         <FlowPane fx:id="actions" orientation="VERTICAL">

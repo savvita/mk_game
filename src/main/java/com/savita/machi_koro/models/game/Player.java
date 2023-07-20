@@ -1,11 +1,9 @@
 package com.savita.machi_koro.models.game;
 
+import com.savita.machi_koro.models.cards.CardFactory;
 import com.savita.machi_koro.models.cards.Cards;
 import com.savita.machi_koro.models.cards.cities.*;
-import com.savita.machi_koro.models.cards.company.ActivityTypes;
-import com.savita.machi_koro.models.cards.company.BakeryCard;
-import com.savita.machi_koro.models.cards.company.CompanyCard;
-import com.savita.machi_koro.models.cards.company.WheatFieldCard;
+import com.savita.machi_koro.models.cards.company.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,26 +48,36 @@ public class Player {
         return name;
     }
 
+    public HashMap<ActivityTypes, Integer> getAdditionValues() {
+        return additionValues;
+    }
+
     /* END GETTERS */
 
     public Player(String name) {
         this.name = name;
         initializeCity();
-        possibilities = new PlayerPossibilities(this);
         initializeCompanies();
-        account.setAmount(3);
+        account.setAmount(GameConstants.BANK_AMOUNT);
+        possibilities = new PlayerPossibilities(this);
     }
 
     private void initializeCity() {
-        cities.add(new TownHallCard());
-        cities.add(new PortCard());
-        cities.add(new RailwayStationCard());
-        cities.add(new ShoppingMallCard());
-        cities.add(new AmusementParkCard());
-        cities.add(new RadioTowerCard());
-        cities.add(new AirportCard());
-        var city = cities.stream().filter(x -> x.getType() == Cards.TOWN_HALL).findFirst().get();
-        city.build(this);
+        try {
+            cities.add(CardFactory.createCity(Cards.TOWN_HALL));
+            cities.add(CardFactory.createCity(Cards.PORT));
+            cities.add(CardFactory.createCity(Cards.RAILWAY_STATION));
+            cities.add(CardFactory.createCity(Cards.SHOPPING_MALL));
+            cities.add(CardFactory.createCity(Cards.AMUSEMENT_PARK));
+            cities.add(CardFactory.createCity(Cards.RADIO_TOWER));
+            cities.add(CardFactory.createCity(Cards.AIRPORT));
+
+            var optional = cities.stream().filter(x -> x.getType() == Cards.TOWN_HALL).findFirst();
+
+            optional.ifPresent(cityCard -> cityCard.build(this));
+        } catch(Exception ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     private void initializeCompanies() {
@@ -112,7 +120,7 @@ public class Player {
         if(!possibilities.isCanBuild()) return false;
 
         Optional<CityCard> optionalCity = cities.stream().filter(x -> x.getType() == type).findFirst();
-        if(!optionalCity.isPresent()) {
+        if(optionalCity.isEmpty()) {
             return false;
         }
         var city = optionalCity.get();
@@ -131,7 +139,11 @@ public class Player {
 
     public boolean destroyCity(Cards type) {
         if(!possibilities.isCanDestroyCity()) return false;
-        var city = cities.stream().filter(x -> x.getType() == type).findFirst().get();
+        var optional = cities.stream().filter(x -> x.getType() == type).findFirst();
+        if(optional.isEmpty()) {
+            return false;
+        }
+        var city = optional.get();
         if(!city.isBuilt()) return false;
 
         city.destroy(this);
@@ -141,14 +153,15 @@ public class Player {
     }
 
     public int getBuiltCitiesCount() {
-        return (int)cities.stream().filter(x -> x.isBuilt()).count();
+        return (int)cities.stream().filter(CityCard::isBuilt).count();
     }
     public int getCompaniesCount(ActivityTypes type) {
         return (int)companies.stream().filter(x -> x.getActivityType() == type).count();
     }
 
     public boolean hasCityCard(Cards type) {
-        return cities.stream().filter(x -> x.getType() == type).findFirst().get().isBuilt();
+        var optional = cities.stream().filter(x -> x.getType() == type).findFirst();
+        return optional.map(CityCard::isBuilt).orElse(false);
     }
 
     public void setDiceCount(int diceCount) {
@@ -173,7 +186,7 @@ public class Player {
     }
 
     public boolean exchangeCompany(Player player, CompanyCard outgo, CompanyCard income) {
-//        if(!possibilities.isCanExchangeCompany()) return false;
+        if(!possibilities.isCanExchangeCompany()) return false;
 
         if(outgo.getActivityType() == ActivityTypes.LARGE_COMPANY || income.getActivityType() == ActivityTypes.LARGE_COMPANY) {
             return false;
@@ -204,4 +217,5 @@ public class Player {
 
         return false;
     }
+
 }
